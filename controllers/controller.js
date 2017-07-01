@@ -1,143 +1,142 @@
-//File: controllers/tvshows.js
-var mongoose = require('mongoose');
-var RBooks  = mongoose.model('Books');
-var RAuthors  = mongoose.model('Authors');
+var http = require('http');
+var apiKey = "12598c38af2f10ab6066499ccddba71d";
+var url = "http://api.themoviedb.org/3";
 
-//GET - Return all tvshows in the DB
-exports.findAllBooks = function(req, res) {
-	RBooks.find(function(err, books) {
-    if(err) res.send(500, err.message);
-    
-     RAuthors.populate(books, {path: "authors"},function(err, libros){
-     	 console.log('GET /books');
-         res.status(200).send(libros);
-        });
-	});
-};
-
-//GET - Return a TVShow with specified ID
-exports.findById = function(req, res) {
-	RBooks.findById(req.params.id, function(err, book) {
-    	if(err) return res.send(500, err.message);
-
-    	console.log('GET /books/' + req.params.id);
-		res.status(200).jsonp(book);
-	});
-};
-
-//POST - Insert a new TVShow in the DB
-exports.addBook = function(req, res) {
-	console.log('POST');
-	console.log(req.body);
-
-	var book = new RBooks({
-		title:    req.body.title,
-		year: 	  req.body.year,
-		authors:  req.body.authors,
-		description:  req.body.description,
-		review:  req.body.review,
-		poster:   req.body.poster,
-		stars:  req.body.stars,
-	});
-
-	book.save(function(err, book) {
-		if(err) return res.send(500, err.message);
-    res.status(200).jsonp(book);
-	});
-};
-
-//PUT - Update a register already exists
-exports.updateBook = function(req, res) {
-	RBooks.findById(req.params.id, function(err, book) {
-		book.title   = req.body.petId;
-		book.year    = req.body.year;
-		book.country = req.body.country;
-		book.poster  = req.body.poster;
-		book.seasons = req.body.seasons;
-		book.genre   = req.body.genre;
-		book.summary = req.body.summary;
-
-		book.save(function(err) {
-			if(err) return res.send(500, err.message);
-    	res.status(200).jsonp(book);
+exports.getPopular = function(req, res) {
+	var request =url+"/movie/popular?api_key="+apiKey;
+	var body="";
+	http.get(request, function (response) {
+		response.on('data', function(chunk) {
+			body += chunk;
+		});
+		response.on('end', function() {
+			res.status(200).send(body);
 		});
 	});
 };
 
-//DELETE - Delete a TVShow with specified ID
-exports.deleteBook = function(req, res) {
-	console.log('DELETE');
-	RBooks.findById(req.params.id, function(err, book) {
-    	book.remove(function(err) {
-			if(err) return res.send(500, err.message);
-			console.log('delete /book')
-    		res.status(200);
+exports.getTopRated = function(req, res) {
+	var request =url+"/movie/top_rated?api_key="+apiKey;
+	var body="";
+	http.get(request, function (response) {
+		response.on('data', function(chunk) {
+			body += chunk;
+		});
+		response.on('end', function() {
+			res.status(200).send(body);
 		});
 	});
 };
 
-
-//GET - Return all tvshows in the DB
-exports.findAllAuthors = function(req, res) {
-	RAuthors.find(function(err, authors) {
-    if(err) res.send(500, err.message);
-
-    console.log('GET /Authors')
-		res.status(200).jsonp(authors);
-	});
-};
-
-//GET - Return a TVShow with specified ID
-exports.findById = function(req, res) {
-	RAuthors.findById(req.params.id, function(err, author) {
-    	if(err) return res.send(500, err.message);
-
-    	console.log('GET /authors/' + req.params.id);
-		res.status(200).jsonp(author);
-	});
-};
-
-//POST - Insert a new TVShow in the DB
-exports.addAuthor = function(req, res) {
-	console.log('POST');
-	console.log(req.body);
-
-	var author = new RAuthors({
-		name:    req.body.name,
-		biography: 	  req.body.biography,
-		birthdate:  req.body.birthdate,
-		nationality:  req.body.nationality,
-	});
-	console.log(author);
-
-	author.save(function(err, author) {
-		if(err) return res.sendStatus(500, err.message);
-    res.sendStatus(200);
-	});
-};
-
-//PUT - Update a register already exists
-exports.updateAuthor = function(req, res) {
-	RAuthors.findById(req.params.id, function(err, author) {
-		author.name=  req.body.name;
-		author.biography= req.body.biography;
-		author.birthdate= req.body.birthdate;
-		author.nationality= req.body.nationality;
-		author.save(function(err) {
-			if(err) return res.send(500, err.message);
-    	res.status(200).jsonp(author);
+exports.getLatest = function(req, res) {
+	var request =url+"/movie/latest?api_key="+apiKey;
+	var body="";
+	http.get(request, function (response) {
+		response.on('data', function(chunk) {
+			body += chunk;
+		});
+		response.on('end', function() {
+			res.status(200).send(body);
 		});
 	});
 };
 
-//DELETE - Delete a TVShow with specified ID
-exports.deleteAuthor = function(req, res) {
-	console.log('DELETE');
-	RAuthors.findById(req.params.id, function(err, author) {
-    	author.remove(function(err) {
-			if(err) return res.send(500, err.message);
-			console.log('delete /author')
-    		res.status(200);
+exports.getInTheaters = function(req, res) {
+	var request =url+"/movie/now_playing?api_key="+apiKey;
+	var body="";
+	http.get(request, function (response) {
+		response.on('data', function(chunk) {
+			body += chunk;
+		});
+		response.on('end', function() {
+			res.status(200).send(body);
+		});
+	});
+};
+
+exports.getUpComing = function(req, res) {
+	var request =url+"/movie/upcoming?api_key="+apiKey;
+	var body="";
+	http.get(request, function (response) {
+		response.on('data', function(chunk) {
+			body += chunk;
+		});
+		response.on('end', function() {
+			res.status(200).send(body);
+		});
+	});
+};
+
+exports.getMovie = function(req, res) {
+	var request =url+"/movie/"+req.params.id+"d?api_key="+apiKey+"&append_to_response=alternative_titles,credits,releases,videos,similar,reviews,images";
+	var body="";
+	http.get(request, function (response) {
+		response.on('data', function(chunk) {
+			body += chunk;
+		});
+		response.on('end', function() {
+			res.status(200).send(body);
+		});
+	});
+};
+
+exports.getPerson = function(req, res) {
+	var request =url+"/person/"+req.params.id+"d?api_key="+apiKey+"&append_to_response=alternative_titles,credits,releases,videos,similar,reviews,images";
+	var body="";
+	http.get(request, function (response) {
+		response.on('data', function(chunk) {
+			body += chunk;
+		});
+		response.on('end', function() {
+			res.status(200).send(body);
+		});
+	});
+};
+
+exports.getSearch = function(req, res) {
+	if ( req.params.page === undefined ) {
+      req.params.page = 1;
+    }
+	var request =url+"/search/multi?api_key="+apiKey+"&query="+req.params.search+"&page="+req.params.page+"&include_adult=false";
+	var body="";
+	http.get(request, function (response) {
+		response.on('data', function(chunk) {
+			body += chunk;
+		});
+		response.on('end', function() {
+			res.status(200).send(body);
+		});
+	});
+};
+
+exports.getSearchMovie = function(req, res) {
+	if ( req.params.page === undefined ) {
+      req.params.page = 1;
+    }
+	var request =url+"/search/movie?api_key="+apiKey+"&query="+req.params.search+"&page="+req.params.page+"&include_adult=false";
+	var body="";
+	http.get(request, function (response) {
+		response.on('data', function(chunk) {
+			body += chunk;
+		});
+		response.on('end', function() {
+			res.status(200).send(body);
+		});
+	});
+};
+
+exports.getSearchPerson = function(req, res) {
+	if ( req.params.page === undefined ) {
+      req.params.page = 1;
+    }
+	var request =url+"/search/person?api_key="+apiKey+"&query="+req.params.search+"&page="+req.params.page+"&include_adult=false";
+	var body="";
+	http.get(request, function (response) {
+		response.on('data', function(chunk) {
+			body += chunk;
+		});
+		response.on('end', function() {
+			res.status(200).send(body);
 		});
 	});
 };
