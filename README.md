@@ -12,7 +12,6 @@ sudo n 4.6.1
 ```
 
 ##Installation
-###If you use MongoDB locally:
 ###Run:
 ```
 npm install
